@@ -1,6 +1,6 @@
 
 
-package de.haas.searchandfind.FileIndexer;
+package de.haas.searchandfind.DocumentGenerator;
 
 import java.io.File;
 import org.apache.lucene.document.Document;
@@ -9,7 +9,7 @@ import org.apache.lucene.document.Document;
  *
  * @author laga
  */
-public interface FileIndexer {
+public interface FileDocumentGenerator {
 
     // TODO: specify schema for Document instances
     /**

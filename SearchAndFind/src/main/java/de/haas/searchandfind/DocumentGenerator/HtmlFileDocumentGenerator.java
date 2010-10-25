@@ -1,6 +1,6 @@
 
 
-package de.haas.searchandfind.FileIndexer;
+package de.haas.searchandfind.DocumentGenerator;
 
 import java.io.File;
 import org.apache.lucene.document.Document;
@@ -9,7 +9,7 @@ import org.apache.lucene.document.Document;
  *
  * @author Michael Haas <haas@cl.uni-heidelberg.de>
  */
-public class PdfFileIndexer implements FileIndexer {
+public class HtmlFileDocumentGenerator implements FileDocumentGenerator {
 
     @Override
     public Document makeDocument(File i) {
