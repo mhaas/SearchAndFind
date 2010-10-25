@@ -48,7 +48,7 @@ public class Indexer {
         // indexer forever and ever
         while (true) {
             File file = this.queue.take();
-            Document document = this.dispatchToFileIndexer(file);
+            Document document = this.dispatchToDocumentGenerator(file);
             writer.addDocument(document);
         }
     }
@@ -59,7 +59,7 @@ public class Indexer {
      * @param f
      * @return
      */
-    private Document dispatchToFileIndexer(File f) {
+    private Document dispatchToDocumentGenerator(File f) {
         return null;
     }
 }
