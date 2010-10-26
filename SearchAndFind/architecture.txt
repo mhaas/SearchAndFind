@@ -1,0 +1,67 @@
+According to Lucene 3.0.2 Javadoc, we need to do the following:
+
+
+   1. Create Documents by adding Fields;
+   2. Create an IndexWriter and add documents to it with addDocument();
+   3. Call QueryParser.parse() to build a query from a string; and
+   4. Create an IndexSearcher and pass the query to its search() method.
+
+
+The first two parts will be done exclusively by the Indexer in the Backend.
+The last two parts will probably be done by the backend as well or done by the
+frontend and execute via RPC.
+
+////// BACKEND /////////
+
+DOCUMENT CREATION
+Document objects are created from files read from disk.
+We care about four file types:
+* plain text
+* html/xhtml
+* xml (dialects other than html)
+* pdf
+
+Files are looked for in a directory to be specified by the user. All documents inside
+the directory (given the file type is appropriate) are to be added to the index.
+We destinguish two cases:
+* bulk processing on startup
+  -> on application startup, the folders are scanned. Unknown files are indexed,
+     deleted files are removed from the index
+* live processing of newly added and deleted files at run-time
+  -> if the user deletes or adds a file while the application is running, we
+     automatically add it
+These measure ensure that the index is up-to-date at all times.
+
+Additionally, we will implement data rate limits. As this is a desktop search engine,
+indexing needs to be unobtrusive. If too much I/O load is generated, desktop latency
+may be increased to the point where it annoys the user.
+
+File listing is done in a separate thread. Results are stored in a ConcurrentLinkedQueue
+which is consumed by the Indexer class. The indexer class dispatches the file to the
+appropriate FileIndexer.
+
+WHAT TO INDEX/FIELDS:
+We want to index the following:
+* time stamps: date of last modification and others, if possible
+* file size
+* meta data such as author (if applicable)
+* headers (if applicable)
+* full text (or possibly only the most salient passages)
+
+
+INDEX STORAGE
+Index storage is done using FSDirectory as we want  persistent storage.
+
+
+
+
+
+/////// FRONTEND /////////
+Frontend is a Java Swing app.
+It will have some form fields and some check boxes from which a Query is generated
+and send to the Backend.
+
+RESULT DISPLAY:
+List of documents.
+File name, some exercept from the document if applicable,
+Ranking.

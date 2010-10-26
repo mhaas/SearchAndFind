@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  */
 public class FileLister extends Thread {
 
-    private BlockingQueue<File> queue;
+    private BlockingQueue<FileWrapper> queue;
     private File dir;
     private final static int QUEUE_CAPACITY = 500;
     /**
@@ -23,7 +23,7 @@ public class FileLister extends Thread {
      * @param fileQueue Queue where files are inserted
      * @param directory Directory for which files are to be listed
      */
-    public FileLister(BlockingQueue<File> fileQueue, File directory) {
+    public FileLister(BlockingQueue<FileWrapper> fileQueue, File directory) {
         this.queue = fileQueue;
         this.dir = directory;
     }
@@ -34,7 +34,7 @@ public class FileLister extends Thread {
      * @param directory Directory for which files are to be listed
      */
     public FileLister(File directory) {
-        this(new LinkedBlockingQueue<File>(QUEUE_CAPACITY), directory);
+        this(new LinkedBlockingQueue<FileWrapper>(QUEUE_CAPACITY), directory);
     }
 
     /**
@@ -72,7 +72,7 @@ public class FileLister extends Thread {
                this.listFiles(currentFile);
            } else if (currentFile.isFile()) {
                // enqueue
-               this.queue.put(currentFile);
+               this.queue.put(new FileWrapper(currentFile));
            }
        }
 
@@ -83,7 +83,7 @@ public class FileLister extends Thread {
     *
     * @return Queue for files
     */
-   public BlockingQueue<File> getQueue() {
+   public BlockingQueue<FileWrapper> getQueue() {
        return this.queue;
    }
 
