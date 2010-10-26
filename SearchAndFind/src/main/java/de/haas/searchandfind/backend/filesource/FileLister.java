@@ -1,6 +1,6 @@
 
 
-package de.haas.searchandfind;
+package de.haas.searchandfind.backend.filesource;
 
 import java.io.File;
 import java.util.concurrent.BlockingQueue;

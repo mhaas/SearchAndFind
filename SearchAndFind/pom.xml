@@ -37,5 +37,10 @@
             <artifactId>jnotify</artifactId>
             <version>0.93</version>
         </dependency>
+        <dependency>
+            <groupId>jmimemagic</groupId>
+            <artifactId>jmimemagic</artifactId>
+            <version>0.1.2</version>
+        </dependency>
     </dependencies>
 </project>
