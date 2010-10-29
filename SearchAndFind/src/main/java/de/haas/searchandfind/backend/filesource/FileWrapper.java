@@ -36,7 +36,7 @@ public class FileWrapper {
     }
 
     public static enum FileState {
-        FILE_NEW, FILE_DELETED, FILE_MODIFIED
+        FILE_NEW, FILE_DELETED
     }
 
     /**
