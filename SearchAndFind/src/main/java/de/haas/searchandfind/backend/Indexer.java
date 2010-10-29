@@ -76,7 +76,7 @@ public class Indexer extends Thread {
             Logger.getLogger(Indexer.class.getName()).log(Level.INFO, "Creating Document for file " + file.getCanonicalPath());
             Document document = DocumentFactory.getDocument(file);
             if (document == null) {
-                Logger.getLogger(Indexer.class.getName()).log(Level.SEVERE, "Document as returned by Factory is null. Skipping");
+                Logger.getLogger(Indexer.class.getName()).log(Level.INFO, "Document as returned by Factory is null. Skipping");
                 continue;
             }
             writer.addDocument(document);
