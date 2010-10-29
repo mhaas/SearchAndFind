@@ -59,7 +59,7 @@ public class QueryHandler {
         Query query = qp.parse(queryStringBuffer.toString());
 
         boolean readOnly = true;
-        IndexSearcher searcher = new IndexSearcher(this.indexDirectory, true);
+        IndexSearcher searcher = new IndexSearcher(this.indexDirectory, readOnly);
 
         TopDocs docs = searcher.search(query, 10);
         ScoreDoc[] results = docs.scoreDocs;
