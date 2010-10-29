@@ -19,13 +19,22 @@ import org.apache.lucene.document.Document;
 public class DocumentFactory {
 
     private static boolean initialized = false;
+    private static final Logger l = Logger.getLogger("DocumentFatory");
 
     /**
+     * Return Document instance for File f.
+     * 
+     * Uses heuristics internally such as the JMimemagic library
+     * to find out the correct file type, then dispatches
+     * the file to the correct DocumentGenerator.
+     * 
+     * May return null if the file type can't be determined
+     * or if the DocumentGenerator instance encountered an error.
      *
-     * @param f
+     * @param f File for which a document is to be generated
      * @return Document or null in case of error
      */
-    public static Document getDocument(File f) {
+    public static Document getDocument(final File f) {
 
         if (!initialized) {
             try {
@@ -41,12 +50,11 @@ public class DocumentFactory {
         try {
             MagicMatch match = Magic.getMagicMatch(f, useExtensionHints);
             return getDocumentForMimeType(match.getMimeType(), f);
-
-
         } catch (MagicParseException ex) {
             Logger.getLogger(DocumentFactory.class.getName()).log(Level.SEVERE, null, ex);
         } catch (MagicMatchNotFoundException ex) {
-            Logger.getLogger(DocumentFactory.class.getName()).log(Level.SEVERE, null, ex);
+            l.info("Magic for file not found. Skipping this file for now.");
+            return null;
         } catch (MagicException ex) {
             Logger.getLogger(DocumentFactory.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -55,10 +63,31 @@ public class DocumentFactory {
 
     }
 
-    private static Document getDocumentForMimeType(String mimeType, File f) {
-        // TODO: find out what mime types we're looking for
+
+    /**
+     * Dispatches file to appropriate DocumentGenerator instance, based on MIME type.
+     *
+     * Will return null if the file type is unknown or if an error has occurred
+     * in the DocumentGenerator.
+     *
+     * @param mimeType String MIME type such as text/html
+     * @param f File handle
+     * @return Document instance or null if an error occured
+     */
+    private static Document getDocumentForMimeType(final String mimeType, final File f) {
+        l.info("Trying to make Document for MIME type: " + mimeType);
         if (mimeType.startsWith("text/plain")) {
             FileDocumentGenerator dg = new TextFileDocumentGenerator();
+            return dg.makeDocument(f);
+        } else if (mimeType.startsWith("text/html")) {
+            FileDocumentGenerator dg = new HtmlFileDocumentGenerator();
+            return dg.makeDocument(f);
+
+        } else if (mimeType.startsWith("text/sgml")) {
+            FileDocumentGenerator dg = new HtmlFileDocumentGenerator();
+            return dg.makeDocument(f);
+        } else if(mimeType.startsWith("application/pdf")) {
+            FileDocumentGenerator dg = new PdfFileDocumentGenerator();
             return dg.makeDocument(f);
         }
         // base case

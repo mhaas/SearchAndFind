@@ -1,5 +1,3 @@
-
-
 package de.haas.searchandfind.backend.documentgenerator;
 
 import de.haas.searchandfind.backend.App;
@@ -18,35 +16,29 @@ import org.apache.lucene.document.NumericField;
  *
  * @author Michael Haas <haas@cl.uni-heidelberg.de>
  */
-public class TextFileDocumentGenerator implements FileDocumentGenerator {
+public class TextFileDocumentGenerator extends FileDocumentGenerator {
 
     @Override
     public Document makeDocument(File i) {
-        
-        Document doc = new Document();
-        try {
-            Field fileNameField = new Field(App.FIELD_FILE_NAME, i.getCanonicalPath(), Field.Store.YES, Field.Index.NOT_ANALYZED);
-            doc.add(fileNameField);
-        } catch (IOException ex) {
-            Logger.getLogger(TextFileDocumentGenerator.class.getName()).log(Level.SEVERE, null, ex);
-        }
 
-        NumericField lastModField = new NumericField(App.FIELD_LAST_MODIFIED);
-        lastModField.setLongValue(i.lastModified());
+        Document doc = new Document();
+        Field fileNameField = super.makeFileNameField(i.getPath());
+        doc.add(fileNameField);
+
+        NumericField lastModField = super.makeLastModifiedField(i.lastModified());
         // last-modified date
         doc.add(lastModField);
 
         try {
             // TODO: how is the content indexed now?
-            Field contentField = new Field(App.FIELD_CONTENT, new FileReader(i));
+            Field contentField = super.makeContentField(i);
             doc.add(contentField);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(TextFileDocumentGenerator.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         return doc;
 
 
     }
-
 }
