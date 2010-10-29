@@ -32,8 +32,9 @@ public class Indexer extends Thread {
     private File targetDir;
 
     public Indexer(File targetDirectory, Directory indexDirectory) {
-        this.directory = indexDirectory;
         this.targetDir = targetDirectory;
+        this.directory = indexDirectory;
+
     }
 
     @Override
@@ -65,14 +66,22 @@ public class Indexer extends Thread {
         // OTOH, it's quite possible we want to keep indexing with the live
         // indexer forever and ever
         // TODO: filter out known documents
+
+
         while (true) {
+        //for (int i = 0; i < 1; i++) {
+
+            //System.out.println(i);
             File file = this.queue.take().getFile();
             Logger.getLogger(Indexer.class.getName()).log(Level.INFO, "Creating Document for file " + file.getCanonicalPath());
             Document document = DocumentFactory.getDocument(file);
             if (document == null) {
                 Logger.getLogger(Indexer.class.getName()).log(Level.SEVERE, "Document as returned by Factory is null. Skipping");
+                continue;
             }
             writer.addDocument(document);
+            writer.commit();
         }
+        //writer.close();
     }
 }
