@@ -18,6 +18,8 @@ public class App {
     public static final String FIELD_FILE_NAME = "fileName";
     public static final String FIELD_LAST_MODIFIED = "lastModified";
     public static final String FIELD_CONTENT = "content";
+    public static final String FIELD_TITLE = "title";
+    public static final String FIELD_KEYWORDS = "keywords";
 
 
     public static void main(String[] args) throws IOException {
