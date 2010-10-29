@@ -4,6 +4,7 @@ import de.haas.searchandfind.backend.filesource.FileWrapper;
 import de.haas.searchandfind.backend.filesource.FileWatcher;
 import de.haas.searchandfind.backend.filesource.FileLister;
 import de.haas.searchandfind.backend.documentgenerator.DocumentFactory;
+import de.haas.searchandfind.backend.filesource.FileWrapper.FileState;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
@@ -57,6 +58,11 @@ public class Indexer extends Thread {
         // TODO: this is somewhat race-y. Ideally, we'd start the FileWatcher once
         // all files are read by the FileLister. On the other hand, we might miss
         // newly created files in this case.
+        // TODO: IndexMaintenance needs to be added here
+        // TODO: first call index maintenance (blocking), then
+        // call FileLister (blocking), then go live with FileWatcher (non-blocking)
+        // While this is not as nice, it ensures we do not get weird race conditions
+
         FileLister lister = new FileLister(this.queue, this.targetDir);
         lister.start();
         FileWatcher watcher = new FileWatcher(this.queue, this.targetDir);
@@ -72,13 +78,25 @@ public class Indexer extends Thread {
         //for (int i = 0; i < 1; i++) {
 
             //System.out.println(i);
-            File file = this.queue.take().getFile();
+            FileWrapper wrappedFile = this.queue.take();
+            // do we already know this document?
+            if (wrappedFile.getState() == FileState.FILE_NEW) {
+                // we need to check for three cases here:
+                // file is completely new: we have no previous record. Process it.
+                // file has previous record: we compare lastModifiedDate
+                //   * if newer, then update (delete from index && process again)
+                //   * if no change: skip
+            }
+            File file = wrappedFile.getFile();
+
+
             Logger.getLogger(Indexer.class.getName()).log(Level.INFO, "Creating Document for file " + file.getCanonicalPath());
             Document document = DocumentFactory.getDocument(file);
             if (document == null) {
                 Logger.getLogger(Indexer.class.getName()).log(Level.INFO, "Document as returned by Factory is null. Skipping");
                 continue;
             }
+
             writer.addDocument(document);
             writer.commit();
         }
