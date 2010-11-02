@@ -3,8 +3,10 @@
 package de.haas.searchandfind.frontend;
 
 /**
+ * Wrapper class for query results.
+ * Contains the file name of the search result and its score.
  *
- * @author laga
+ * @author Michael Haas <haas@cl.uni-heidelberg.de>
  */
 public class QueryResult {
 

@@ -18,6 +18,10 @@ import org.apache.lucene.search.TopDocs;
 
 /**
  *
+ * Runs query against the index and updates the UI with the results.
+ * 
+ * TODO: this should be decoupled from the UI by using callbacks or signals.
+ *
  * @author Michael Haas <haas@cl.uni-heidelberg.de>
  */
 public class QueryRunner extends Thread {
@@ -26,9 +30,18 @@ public class QueryRunner extends Thread {
     private IndexSearcher searcher;
     private static final int MAX_QUERY_RESULTS = 100;
     private JFrame frame;
+    // TODO: unnecessary, only nead DefaultListModel (or refactor to use callback)
     private JList list;
     private static final Logger l = Logger.getLogger("QueryRunner");
 
+    /**
+     * Constructor
+     *
+     * @param userQuery Query to be run
+     * @param indexSearcher IndexSearcher against which userQuery is ran
+     * @param mainFrame JFrame instance of the GUI.
+     * @param resultList JList instance which displays the results
+     */
     public QueryRunner(Query userQuery, IndexSearcher indexSearcher, JFrame mainFrame, JList resultList) {
         this.query = userQuery;
         this.searcher = indexSearcher;
@@ -37,12 +50,18 @@ public class QueryRunner extends Thread {
         l.setLevel(Level.FINEST);
     }
 
+    /**
+     * Run query and update UI.
+     */
     @Override
     public void run() {
         this.doQuery();
 
     }
 
+    /**
+     * Runs query against searcher, updates resultList UI element
+     */
     private void doQuery() {
         // signal activity to user
         //      frame.setEnabled(false);

@@ -6,6 +6,10 @@
 /*
  * Frontend.java
  *
+ * Frontend for user interaction.
+ *
+ * TODO: needs some refactoring. This is somewhat bloaty due to the generated code.
+ *
  * Created on Nov 2, 2010, 1:10:28 PM
  */
 package de.haas.searchandfind.frontend;
