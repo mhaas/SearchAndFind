@@ -5,6 +5,7 @@ import de.haas.searchandfind.backend.filesource.FileWatcher;
 import de.haas.searchandfind.backend.filesource.FileLister;
 import de.haas.searchandfind.backend.documentgenerator.DocumentFactory;
 import de.haas.searchandfind.backend.filesource.FileWrapper.FileState;
+import de.haas.searchandfind.backend.filesource.IndexMaintenance;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
@@ -22,7 +23,7 @@ import org.apache.lucene.util.Version;
  *
  * @author Michael Haas <haas@cl.uni-heidelberg.de>
  */
-public class Indexer extends Thread {
+public class Indexer {
 
     // TODO: sensible value
     private static final int MAX_FIELD_LENGTH = 500;
@@ -38,18 +39,8 @@ public class Indexer extends Thread {
 
     }
 
-    @Override
-    public void run() {
-        try {
-            this.kickOffIndexing();
-        } catch (IOException ex) {
-            Logger.getLogger(Indexer.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(Indexer.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
 
-    private void kickOffIndexing() throws IOException, InterruptedException {
+    public void kickOffIndexing() throws IOException, InterruptedException {
 
         Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_30);
         IndexWriter.MaxFieldLength mfl = new IndexWriter.MaxFieldLength(MAX_FIELD_LENGTH);
@@ -62,6 +53,10 @@ public class Indexer extends Thread {
         // TODO: first call index maintenance (blocking), then
         // call FileLister (blocking), then go live with FileWatcher (non-blocking)
         // While this is not as nice, it ensures we do not get weird race conditions
+
+        IndexMaintenance im = new IndexMaintenance(this.directory, this.targetDir);
+        im.checkForDeletedFiles();
+
 
         FileLister lister = new FileLister(this.queue, this.targetDir);
         lister.start();

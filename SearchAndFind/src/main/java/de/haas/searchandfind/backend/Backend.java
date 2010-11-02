@@ -6,10 +6,12 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.SimpleFSDirectory;
 
 /**
- * Hello world!
+ * Starts the backend.
+ * Kicks off file indexing. Keep this running in the background to keep the index up to date.
+ * 
  *
  */
-public class App {
+public class Backend {
 
     public static final File TARGET_DIRECTORY = new File("/home/laga/searchandfind/files");
 
@@ -22,12 +24,12 @@ public class App {
     public static final String FIELD_KEYWORDS = "keywords";
 
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         // where we store the index on disk
         Directory directory = new SimpleFSDirectory(INDEX_DIRECTORY);
 
-        Thread indexer = new Indexer(TARGET_DIRECTORY, directory);
-        indexer.start();
+        Indexer indexer = new Indexer(TARGET_DIRECTORY, directory);
+        indexer.kickOffIndexing();
 
     }
 }
