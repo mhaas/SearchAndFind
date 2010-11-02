@@ -42,7 +42,8 @@ public abstract class FileDocumentGenerator {
     }
 
     public NumericField makeLastModifiedField(long lastModifiedDate) {
-        NumericField lastModField = new NumericField(Constants.FIELD_LAST_MODIFIED);
+        boolean indexWithTokenStream = true;
+        NumericField lastModField = new NumericField(Constants.FIELD_LAST_MODIFIED, Field.Store.YES, indexWithTokenStream);
         lastModField.setLongValue(lastModifiedDate);
         return lastModField;
     }
