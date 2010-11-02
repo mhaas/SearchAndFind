@@ -12,7 +12,7 @@ import java.util.logging.Logger;
  *
  * @author Michael Haas <haas@cl.uni-heidelberg.de>
  */
-public class FileLister extends Thread {
+public class NewFileLister extends Thread {
 
     private BlockingQueue<FileWrapper> queue;
     private File dir;
@@ -23,17 +23,17 @@ public class FileLister extends Thread {
      * @param fileQueue Queue where files are inserted
      * @param directory Directory for which files are to be listed
      */
-    public FileLister(BlockingQueue<FileWrapper> fileQueue, File directory) {
+    public NewFileLister(BlockingQueue<FileWrapper> fileQueue, File directory) {
         this.queue = fileQueue;
         this.dir = directory;
     }
 
     /**
-     * Constructor. Use this to let the FileLister create its own queue.
+     * Constructor. Use this to let the NewFileLister create its own queue.
      * 
      * @param directory Directory for which files are to be listed
      */
-    public FileLister(File directory) {
+    public NewFileLister(File directory) {
         this(new LinkedBlockingQueue<FileWrapper>(QUEUE_CAPACITY), directory);
     }
 
@@ -47,7 +47,7 @@ public class FileLister extends Thread {
                 this.listFiles(this.dir);
             } catch (InterruptedException ex) {
                 // TODO: do something about this.
-                Logger.getLogger(FileLister.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(NewFileLister.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {
             throw new RuntimeException("dir field is not a directory.");
