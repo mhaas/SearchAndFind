@@ -6,6 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.Fieldable;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.util.PDFTextStripper;
@@ -21,12 +22,16 @@ public class PdfFileDocumentGenerator extends FileDocumentGenerator {
     @Override
     public Document makeDocument(File i) {
 
-        PDDocument pdf;
+        PDDocument pdf = null;
         Document doc = new Document();
-
-
         try {
+
             pdf = PDDocument.load(i);
+
+            Fieldable lastModField = super.makeLastModifiedField(i.lastModified());
+            doc.add(lastModField);
+            Field fileNameField = super.makeFileNameField(i.getPath());
+            doc.add(fileNameField);
 
             PDDocumentInformation info = pdf.getDocumentInformation();
             String title = info.getTitle();
@@ -50,15 +55,26 @@ public class PdfFileDocumentGenerator extends FileDocumentGenerator {
             // TODO: get subject
 
             // get content
-            PDFTextStripper stripper = new PDFTextStripper();
-            String content = stripper.getText(pdf);
-            Field contentField = super.makeContentField(content);
-            doc.add(contentField);
+            try {
+                PDFTextStripper stripper = new PDFTextStripper();
+                String content = stripper.getText(pdf);
+                Field contentField = super.makeContentField(content);
+                doc.add(contentField);
+            } catch (Throwable th) {
+                l.severe("Caught Throwable while loading PDF content");
+                l.severe(th.toString());
+            }
             return doc;
 
 
         } catch (IOException ex) {
             Logger.getLogger(PdfFileDocumentGenerator.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                pdf.close();
+            } catch (IOException ex) {
+                Logger.getLogger(PdfFileDocumentGenerator.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
 
         return null;
