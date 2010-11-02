@@ -14,14 +14,19 @@ import de.haas.searchandfind.common.Constants;
  */
 public class Backend {
 
-   
-
+    /**
+     * Prints usage information to stderr.
+     */
     private static void showHelpOnStderr() {
         System.err.println("Welcome to " + Constants.NAME + " Version " + Constants.VERSION);
         System.err.println("First argument must be the directory containing the files to be indexed");
         System.err.println("Second argument must be directory containing the index");
     }
 
+    /**
+     * Starts indexing.
+     * 
+     */
     public static void main(String[] args) throws IOException, InterruptedException {
 
 
