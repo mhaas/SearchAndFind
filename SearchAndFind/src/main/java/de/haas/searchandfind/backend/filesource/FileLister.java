@@ -78,13 +78,4 @@ public class FileLister extends Thread {
 
    }
 
-   /**
-    * Getter for queue field.
-    *
-    * @return Queue for files
-    */
-   public BlockingQueue<FileWrapper> getQueue() {
-       return this.queue;
-   }
-
 }

@@ -1,6 +1,7 @@
 package de.haas.searchandfind.backend.filesource;
 
-import de.haas.searchandfind.backend.App;
+import de.haas.searchandfind.backend.Backend;
+import de.haas.searchandfind.common.Constants;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -35,7 +36,7 @@ public class IndexMaintenance {
             if (currentDoc == null) {
                 continue;
             }
-            String pathName = currentDoc.get(App.FIELD_FILE_NAME);
+            String pathName = currentDoc.get(Constants.FIELD_FILE_NAME);
             if (pathName == null) {
                 l.severe("No pathname for document " + ii);
             }

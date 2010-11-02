@@ -1,6 +1,7 @@
 package de.haas.searchandfind.frontend;
 
-import de.haas.searchandfind.backend.App;
+import de.haas.searchandfind.backend.Backend;
+import de.haas.searchandfind.common.Constants;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +28,7 @@ public class QueryHandler {
     Directory indexDirectory;
 
     public QueryHandler() throws IOException {
-         this.indexDirectory = new SimpleFSDirectory(App.INDEX_DIRECTORY);
+         this.indexDirectory = new SimpleFSDirectory(null);
     }
 
     public List<QueryResult> handleQuery(String tokenInFileName, String tokenInContent) throws IOException, ParseException {
@@ -37,7 +38,7 @@ public class QueryHandler {
         StringBuffer queryStringBuffer = new StringBuffer();
         if (tokenInFileName != null && !tokenInFileName.isEmpty()) {
             queryStringBuffer.append("(");
-            queryStringBuffer.append(App.FIELD_FILE_NAME);
+            queryStringBuffer.append(Constants.FIELD_FILE_NAME);
             queryStringBuffer.append(":");
             queryStringBuffer.append(tokenInFileName);
             queryStringBuffer.append(")");
@@ -46,7 +47,7 @@ public class QueryHandler {
         if (tokenInContent != null && !tokenInContent.isEmpty()) {
             // TODO: how does searching actually work? What is stored? How is the analyzer used?!
             queryStringBuffer.append("(");
-            queryStringBuffer.append(App.FIELD_CONTENT);
+            queryStringBuffer.append(Constants.FIELD_CONTENT);
             queryStringBuffer.append(":");
             queryStringBuffer.append(tokenInContent);
             queryStringBuffer.append(")");
@@ -55,7 +56,7 @@ public class QueryHandler {
         // TODO: export Lucene version somewhere
         // TODO: export analyzer object somewhere
         Logger.getLogger(QueryHandler.class.getName()).log(Level.INFO, "Constructed Query String: " + queryStringBuffer.toString());
-        QueryParser qp = new QueryParser(Version.LUCENE_30, App.FIELD_CONTENT, new StandardAnalyzer(Version.LUCENE_30));
+        QueryParser qp = new QueryParser(Version.LUCENE_30, Constants.FIELD_CONTENT, new StandardAnalyzer(Version.LUCENE_30));
         Query query = qp.parse(queryStringBuffer.toString());
 
         boolean readOnly = true;
@@ -65,7 +66,7 @@ public class QueryHandler {
         ScoreDoc[] results = docs.scoreDocs;
         for (int ii = 0; ii < results.length; ii++) {
             Document currentDoc = searcher.doc(ii);
-            String fileName = currentDoc.get(App.FIELD_FILE_NAME);
+            String fileName = currentDoc.get(Constants.FIELD_FILE_NAME);
             QueryResult currentResult = new QueryResult(fileName);
             res.add(currentResult);
         }

@@ -23,6 +23,8 @@ import org.apache.lucene.queryParser.ParseException;
  *
  * @author laga
  */
+
+// TODO: consider newly added fields when doing a search. Add boost appropriately
 public class Gui extends javax.swing.JFrame {
 
     /** Creates new form Gui */
@@ -39,6 +41,7 @@ public class Gui extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jTabbedPane1 = new javax.swing.JTabbedPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         resultList = new javax.swing.JList();
         jLabel1 = new javax.swing.JLabel();
@@ -201,6 +204,7 @@ public class Gui extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JList resultList;

@@ -1,6 +1,6 @@
 package de.haas.searchandfind.backend.documentgenerator;
 
-import de.haas.searchandfind.backend.App;
+import de.haas.searchandfind.backend.Backend;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
