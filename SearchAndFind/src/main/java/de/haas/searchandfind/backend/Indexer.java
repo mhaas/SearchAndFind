@@ -36,7 +36,6 @@ public class Indexer {
     public Indexer(File targetDirectory, Directory indexDirectory) {
         this.targetDir = targetDirectory;
         this.directory = indexDirectory;
-
     }
 
 
