@@ -10,6 +10,10 @@ import java.util.logging.Logger;
 
 /**
  *
+ * Lists all files in a directory recursively and enqueues so
+ * they can be added to the database as documents.
+ *
+ *
  * @author Michael Haas <haas@cl.uni-heidelberg.de>
  */
 public class NewFileLister extends Thread {

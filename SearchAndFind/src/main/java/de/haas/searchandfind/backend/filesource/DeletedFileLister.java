@@ -16,8 +16,11 @@ import org.apache.lucene.search.Scorer;
 import org.apache.lucene.store.Directory;
 
 /**
+ * Scans database for files, then checks file system if they still exists.
+ * If they don't exist, they're enqueued to be deleted.
  *
- * @author laga
+ *
+ * @author Michael Haas <haas@cl.uni-heidelberg.de>
  */
 public class DeletedFileLister extends Thread {
 
