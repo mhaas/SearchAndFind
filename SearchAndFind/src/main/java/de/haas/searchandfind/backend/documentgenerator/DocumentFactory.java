@@ -75,7 +75,7 @@ public class DocumentFactory {
      * @return Document instance or null if an error occured
      */
     private static Document getDocumentForMimeType(final String mimeType, final File f) {
-        l.info("Trying to make Document for MIME type: " + mimeType);
+        l.info("Making Document for MIME type: " + mimeType);
         if (mimeType.startsWith("text/plain")) {
             FileDocumentGenerator dg = new TextFileDocumentGenerator();
             return dg.makeDocument(f);
