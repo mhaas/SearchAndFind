@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
@@ -44,11 +45,25 @@ public class Frontend extends javax.swing.JFrame {
 
     /** Creates new form Frontend */
     public Frontend() {
+
         initComponents();
+        DefaultListModel model = new DefaultListModel();
+        this.resultList.setModel(model);
         addPanes();
+        disableUI();
+    }
+
+    private void disableUI() {
+        this.tabbedQueryPane.setEnabled(false);
+    }
+
+    private void enableUI() {
+        this.tabbedQueryPane.setEnabled(true);
     }
 
     private void addPanes() {
+
+
 
         JScrollPane simpleQueryScrollPane = new JScrollPane(this.simpleQueryPanel);
         JScrollPane advancedQueryScrollPane = new JScrollPane(this.advancedQueryPanel);
@@ -321,12 +336,14 @@ public class Frontend extends javax.swing.JFrame {
     private void openDirectoryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openDirectoryButtonActionPerformed
 
         JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         int res = fileChooser.showOpenDialog(this);
         if (res == JFileChooser.APPROVE_OPTION) {
             try {
                 File file = fileChooser.getSelectedFile();
                 Directory dir = new SimpleFSDirectory(file);
                 this.indexSearcher = new IndexSearcher(dir);
+                this.enableUI();
             } catch (IOException ex) {
                 this.indicateDirectoryError();
                 Logger.getLogger(Frontend.class.getName()).log(Level.SEVERE, null, ex);
@@ -336,10 +353,6 @@ public class Frontend extends javax.swing.JFrame {
 
     private void indicateDirectoryError() {
         Popup p = PopupFactory.getSharedInstance().getPopup(this, new JLabel("Error opening Directory"), 50, 50);
-        p.show();
-    }
-    private void indicateUnOpenedDirectory() {
-        Popup p = PopupFactory.getSharedInstance().getPopup(this, new JLabel("You need to open a directory first"), 50, 50);
         p.show();
     }
 
