@@ -27,6 +27,7 @@ public class Backend {
 
         if (args.length < 2) {
             showHelpOnStderr();
+            System.exit(1);
         }
 
         File target = new File(args[0]);
