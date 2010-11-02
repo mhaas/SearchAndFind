@@ -30,8 +30,15 @@ public class FileWatcher extends Thread {
     public void run() {
         JNotifyListener listener = new MyListener(this.q);
         boolean watchSubTree = true;
+        // TODO: we probably do not need FILE_CREATED as we will only see empty files at that time
+        // not listening for FILE_RENAME as of now. We're getting too many events.
+        // TODO: are we missing out on events if we do not listen for FILE_RENAME?
+        // i assume that FILE_CREATED and FILE_MODIFIED will also cover FILE_RENAMED
+        int mask = JNotify.FILE_CREATED | JNotify.FILE_DELETED | JNotify.FILE_MODIFIED;
         try {
-            JNotify.addWatch(this.dir.getCanonicalPath(), JNotify.FILE_ANY, watchSubTree, listener);
+            // TODO: needs correct JNOTIFY.FILE behavior. With JNotify.ANY, we seem
+            // to be receiving too many events
+            JNotify.addWatch(this.dir.getCanonicalPath(), mask, watchSubTree, listener);
         } catch (IOException ex) {
             Logger.getLogger(FileWatcher.class.getName()).log(Level.SEVERE, null, ex);
         }
