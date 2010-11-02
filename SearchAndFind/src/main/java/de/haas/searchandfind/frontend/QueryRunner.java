@@ -27,12 +27,14 @@ public class QueryRunner extends Thread {
     private static final int MAX_QUERY_RESULTS = 100;
     private JFrame frame;
     private JList list;
+    private static final Logger l = Logger.getLogger("QueryRunner");
 
     public QueryRunner(Query userQuery, IndexSearcher indexSearcher, JFrame mainFrame, JList resultList) {
         this.query = userQuery;
         this.searcher = indexSearcher;
         this.frame = mainFrame;
         this.list = resultList;
+        l.setLevel(Level.FINEST);
     }
 
     @Override
@@ -42,28 +44,29 @@ public class QueryRunner extends Thread {
     }
 
     private void doQuery() {
-
         // signal activity to user
-        frame.setEnabled(false);
-        DefaultListModel model = new DefaultListModel();
-        this.list.setModel(model);
+        //      frame.setEnabled(false);
+        // TODO: ugly!
+        DefaultListModel model = (DefaultListModel) this.list.getModel();
+        l.fine("Clearing list model");
+        model.clear();
 
         try {
+            l.info("Running Query " + this.query.toString());
             TopDocs results = searcher.search(this.query, MAX_QUERY_RESULTS);
             ScoreDoc[] docs = results.scoreDocs;
+            l.info("Got this many results: " + docs.length);
             for (int ii = 0; ii < docs.length; ii++) {
                 ScoreDoc currentScoreDocument = docs[ii];
                 int docIndex = currentScoreDocument.doc;
                 Document currentDocument = searcher.doc(docIndex);
                 String pathName = currentDocument.get(Constants.FIELD_FILE_NAME);
+                l.info("pathName for current result is: " + pathName);
                 QueryResult res = new QueryResult(pathName, currentScoreDocument.score);
                 model.addElement(res);
             }
         } catch (IOException ex) {
             Logger.getLogger(QueryRunner.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            this.frame.setEnabled(true);
         }
-
     }
 }
