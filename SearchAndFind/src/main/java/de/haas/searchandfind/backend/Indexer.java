@@ -5,7 +5,6 @@ import de.haas.searchandfind.backend.filesource.FileWatcher;
 import de.haas.searchandfind.backend.filesource.NewFileLister;
 import de.haas.searchandfind.backend.documentgenerator.DocumentFactory;
 import de.haas.searchandfind.backend.filesource.FileWrapper.FileState;
-import de.haas.searchandfind.backend.filesource.DeletedFileLister;
 import de.haas.searchandfind.common.Constants;
 import java.io.File;
 import java.io.IOException;
@@ -17,7 +16,6 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.document.NumericField;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
@@ -31,25 +29,59 @@ import org.apache.lucene.util.Version;
 
 /**
  *
+ * This class maintains the index.
+ * 
+ * It checks for new, updated and deleted files and updates the Document directory
+ * accordingly.
+ *
  * @author Michael Haas <haas@cl.uni-heidelberg.de>
  */
 public class Indexer {
 
     // TODO: sensible value
     private static final int MAX_FIELD_LENGTH = 500;
+    /**
+     *  Items in this queue will be added or removed from the Index
+     */
     private BlockingQueue<FileWrapper> queue = new LinkedBlockingQueue<FileWrapper>();
-    // TODO: is an IndexWriter threadsafe? Or do we need a singleton here?
-    // "An IndexWriter creates and maintains an index. "
+    // Directory instance holding the index
     private Directory directory;
+    // Directory whose files are to be indexed.
     private File targetDir;
+    // IndexWriter to which Document instances are written
     private IndexWriter writer;
+    // Logger instance
     private final static Logger l = Logger.getLogger("Indexer");
 
+    /**
+     * Default constructor.
+     *
+     * @param targetDirectory Directory holding files to be indexed
+     * @param indexDirectory Directory holding the Lucene index
+     */
     public Indexer(File targetDirectory, Directory indexDirectory) {
         this.targetDir = targetDirectory;
         this.directory = indexDirectory;
     }
 
+    /**
+     *
+     * Starts indexing process.
+     *
+     * This method will do the following:
+     * - scan for deleted files
+     * - scan for new files
+     * - watch for newly created and updated files
+     *
+     * These activities are done asynchronously without proper synchronization.
+     * Race conditions are quite possible, but should rarely be exploited. They will
+     * typically result in an inconsistent (not corrupted!) index.
+     * A re-start of the Indexer should fix this as references to deleted files
+     * are removed and new files are added.
+     *
+     * @throws IOException
+     * @throws InterruptedException
+     */
     public void kickOffIndexing() throws IOException, InterruptedException {
 
         Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_30);
@@ -119,14 +151,32 @@ public class Indexer {
         //writer.close();
     }
 
+    /**
+     * Given a path to a file, delete all documents for that file from the index.
+     *
+     * @param path Path to the file, as returned by File::getPath()
+     * @throws CorruptIndexException
+     * @throws IOException
+     */
     private void deleteDocumentByPath(String path) throws CorruptIndexException, IOException {
         Term t = new Term(Constants.FIELD_FILE_NAME, path);
         this.writer.deleteDocuments(t);
     }
 
+    /**
+     *
+     * Checks if a given File is newer than corresponding Document in the index.
+     *
+     * Internally, this retrieves the lastModifiedDate from the index for that path
+     * and compares it to the current lastModifiedDate of the file.
+     *
+     * If a file is unknown, then it is considered to be new.
+     *
+     * @param file
+     * @return true if we want to (re-)index the file
+     * @throws IOException
+     */
     private boolean hasFileBeenUpdated(FileWrapper file) throws IOException {
-
-
         // if we do not have an index yet, then all files are new
         if (!IndexReader.indexExists(this.writer.getDirectory())) {
             return true;
