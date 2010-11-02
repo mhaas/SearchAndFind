@@ -25,6 +25,10 @@ import org.w3c.dom.NodeList;
 import org.w3c.tidy.Tidy;
 
 /**
+ * Creates Document instances from HTML files.
+ * 
+  Fills in these fields: fileName, lastMod, content, title, keywords
+ * (if possible)
  *
  * @author Michael Haas <haas@cl.uni-heidelberg.de>
  */

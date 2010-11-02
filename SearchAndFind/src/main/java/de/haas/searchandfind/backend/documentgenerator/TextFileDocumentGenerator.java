@@ -13,10 +13,12 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.document.NumericField;
 
 /**
+ * Creates Documents from Text File.
+ * Only fills in content, lastMod and fileName fields.
  *
  * @author Michael Haas <haas@cl.uni-heidelberg.de>
  */
-public class TextFileDocumentGenerator extends FileDocumentGenerator {
+class TextFileDocumentGenerator extends FileDocumentGenerator {
 
     @Override
     public Document makeDocument(File i) {

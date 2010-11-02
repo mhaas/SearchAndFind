@@ -12,13 +12,14 @@ import org.apache.lucene.document.Document;
 
 /**
  *
- * Creates Documents given a File.
+ * Creates Document instances given a File.
  *
  * @author Michael Haas <haas@cl.uni-heidelberg.de<
  */
 public class DocumentFactory {
-
+    /* tracks whether we have initialized the Magic already */
     private static boolean initialized = false;
+    /* logger object */
     private static final Logger l = Logger.getLogger("DocumentFatory");
 
     /**

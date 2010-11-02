@@ -10,7 +10,7 @@ import de.haas.searchandfind.common.Constants;
 
 /**
  *
- * @author laga
+ * @author Michael Haas <haas@cl.uni-heidelberg.de<
  */
 public abstract class FileDocumentGenerator {
 

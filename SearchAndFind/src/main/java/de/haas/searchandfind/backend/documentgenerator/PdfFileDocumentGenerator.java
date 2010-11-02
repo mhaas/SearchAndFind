@@ -12,10 +12,13 @@ import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.util.PDFTextStripper;
 
 /**
+ * Creates documents from PDF files.
+ *
+ * Fills in these fields: fileName, lastMod, content, title, keywords
  *
  * @author Michael Haas <haas@cl.uni-heidelberg.de>
  */
-public class PdfFileDocumentGenerator extends FileDocumentGenerator {
+class PdfFileDocumentGenerator extends FileDocumentGenerator {
 
     private static final Logger l = Logger.getLogger("PdfFileDocumentGenerator");
 
@@ -34,7 +37,8 @@ public class PdfFileDocumentGenerator extends FileDocumentGenerator {
             doc.add(fileNameField);
 
             PDDocumentInformation info = pdf.getDocumentInformation();
-            String title = info.getTitle();
+            String title =
+                    info.getTitle();
             if (title == null) {
                 l.info("PDF document does not have title");
             } else {
